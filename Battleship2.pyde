@@ -129,7 +129,8 @@ def draw():
     textSize(24)
     text("Games: "+str(games),100,50)
     text("AVERAGE: "+str(average_shots),350,80)
-    saveFrame("####.png")
+    #Uncomment to save screenshots:
+    #saveFrame("####.png")
     
 '''Average shots settles down to 24.
 The book's answer is 24.'''
