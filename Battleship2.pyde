@@ -10,6 +10,7 @@ NUM_R = 10
 NUM_C = 10
 
 class Cell:
+    '''A single square'''
     def __init__(self,y,x,sz,occupied=False):
         self.x = x
         self.y = y
@@ -18,12 +19,13 @@ class Cell:
         
     def update(self):
         if self.occupied:
-            fill(100)
+            fill(100) #gray
         else:
-            fill(255)
+            fill(255) #white
         rect(self.x,self.y,self.sz,self.sz)
         
 class Grid:
+    #m x n grid of cells
     def __init__(self):
         self.m = NUM_R
         self.n = NUM_C
@@ -37,6 +39,7 @@ class Grid:
             
             
 class Battleship:
+    #4x1 rectangle
     def __init__(self):
         self.x = random.randint(0,NUM_C-1)
         self.y = random.randint(0,NUM_R-1)
@@ -44,8 +47,8 @@ class Battleship:
         #choose direction 0 = horiz, 1 = vert
         self.direction = random.randint(0,1) 
         if self.direction == 0: #horizontal
-            self.y = random.randint(0,NUM_R-1)
-            while NUM_C - self.x < 4:
+            self.y = random.randint(0,NUM_R-1) #row can be anything
+            while NUM_C - self.x < 4: #column can't be less than 4 from the edge
                 self.x = random.randint(0,NUM_C-1)
             self.squares = [[self.y,self.x+i] for i in range(4)]
               
@@ -54,11 +57,6 @@ class Battleship:
                 self.y = random.randint(0,NUM_R-1)
             self.x = random.randint(0,NUM_C-1)
             self.squares = [[self.y+i,self.x] for i in range(4)]
-        
-    '''def update(self):
-        fill(100)
-        for i in self.squares:
-            rect(i[0]*sz,i[1]*sz,sz,sz)'''
         
             
 class Shot:
@@ -76,8 +74,9 @@ class Shot:
 class Game:
     def __init__(self):
         global grid
-        grid = Grid()
-        self.ship = Battleship()
+        grid = Grid() #create the Grid
+        self.ship = Battleship() #create the Battleship
+        #set the battleship's squares to be occupied
         for s in self.ship.squares:
             grid.cellList[grid.n*s[1]+s[0]].occupied = True
                 
@@ -89,12 +88,15 @@ class Game:
         
         while not hit:
             #grid.update()
+            #take a random shot
             self.shot = Shot(random.randint(0,NUM_C-1),
-                            random.randint(0,NUM_R-1))
+                            random.randint(0,NUM_R-1))\
+            #put it in the shotList
             shotList.append([self.shot.c,self.shot.r])
-            shots += 1
-            hit = self.shot.shoot(grid)
-        grid.update()
+            shots += 1 #increment the number of shots taken
+            hit = self.shot.shoot(grid) #check for a hit
+        grid.update() #draw the final grid of the game
+        #draw the shots taken
         for shot in shotList:
             fill(255,0,0)
             ellipse(shot[1]*sz,shot[0]*sz,sz,sz)
@@ -104,14 +106,6 @@ class Game:
         textSize(24)
         fill(0,100,0)
         text("SHOTS: "+str(shots),350,50)
-        '''textSize(18)
-        if hit:
-            hits += 1
-            fill(0,255,0) #green
-            text("HIT!",50,50)
-        else:
-            fill(255,0,0) #red
-            text("MISS!",50,50)'''
 
 def setup():
     global sz,hits,shotsnum,games
@@ -125,17 +119,17 @@ def setup():
 def draw():
     #frameRate(4)
     background(255)
-    #global g
-    #g.update()
+    #create a Game and play it
     game1 = Game()
     game1.play()
+    #calculate the average shots it's taking to hit the Battleship
     average_shots = int(sum(shotsnum)/float(len(shotsnum)))
+    #display all the info
     fill(0,0,255)
     textSize(24)
     text("Games: "+str(games),100,50)
     text("AVERAGE: "+str(average_shots),350,80)
-    #if frameCount % 3 == 0:
     saveFrame("####.png")
     
-'''Average shots settles down to anywhere between 22 and 26.
+'''Average shots settles down to 24.
 The book's answer is 24.'''
